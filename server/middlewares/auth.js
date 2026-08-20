@@ -22,4 +22,4 @@ const protect = async (req, res, next) => {
 
 }
 
-export default protect;
+export default protect
