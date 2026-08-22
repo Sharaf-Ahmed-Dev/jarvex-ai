@@ -33,3 +33,28 @@ export const textMessageController = async (req, res) => {
         return res.json({ success: false, message: error.message })
     }
 }
+
+// Image generation message controller
+export const imageMessageController = async (req, res) => {
+    try {
+        const userId = req.user._id;
+        // check credits
+        if (req.user.credits < 2) {
+            return res.json({ success: false, message: "You don't have enough credits to use this feature" })
+        }
+
+        const { prompt, chatId, isPublished } = req.body;
+        // Find chat
+        const chat = await Chat.findOne({ userId, _id: chatId })
+
+        // push user message
+        chat.messages.push({
+            role: "user",
+            content: prompt,
+            timestamp: Date.now(),
+            isImage: false
+        })
+    } catch (error) {
+
+    }
+}
