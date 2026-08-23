@@ -8,6 +8,12 @@ import imagekit from "../configs/imageKit.js"
 export const textMessageController = async (req, res) => {
     try {
         const userId = req.user._id
+
+        // check credits
+        if (req.user.credits < 1) {
+            return res.json({ success: false, message: "You don't have enough credits to use this feature" })
+        }
+
         const { chatId, prompt } = req.body
 
         const chat = await Chat.findOne({ userId, _id: chatId })
@@ -27,6 +33,7 @@ export const textMessageController = async (req, res) => {
         });
 
         const reply = { ...choices[0].message, timestamp: Date.now(), isImage: false }
+        res.json({ success: true, reply })
 
         chat.messages.push(reply)
         await chat.save()
