@@ -1,6 +1,7 @@
 import axios from "axios"
 import Chat from "../models/Chat.js"
 import User from "../models/User.js"
+import imagekit from "../configs/imageKit.js"
 
 
 // Text based ai chat message controller
@@ -68,10 +69,32 @@ export const imageMessageController = async (req, res) => {
         // Trigger generation by fetching from Imagekit
         const aiImageResoponse = await axios.get(generatedImageUrl,
             { responseType: "arraybuffer" })
-        
-            
+
+        // Convert to Base64
+        const base64Image = `data:image/png;base64,${Buffer.from(aiImageResoponse.data,
+            "binary").toString('base64')}`;
+
+        // Upload to Imagekit media library
+        const uploadResponse = await imagekit.upload({
+            file: base64Image,
+            fileName: `${Date.now()}.png`,
+            folder: "jarvexai"
+        })
+
+        const reply = {
+            role: 'assistant',
+            content: uploadResponse.url,
+            timestamp: Date.now(),
+            isImage: true,
+            isPublished
+        }
+        res.json({ success: true, reply })
+
+        chat.messages.push(reply)
+        await chat.save()
+        await User.updateOne({ _id: userId }, { $inc: { credits: -2 } })
 
     } catch (error) {
-
+        return res.json({ success: false, message: error.message })
     }
 }
