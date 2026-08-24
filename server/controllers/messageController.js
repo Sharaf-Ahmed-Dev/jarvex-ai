@@ -128,10 +128,7 @@ export const imageMessageController = async (req, res) => {
         }
 
         // Convert to Base64
-        const base64Image = `data:image/png;base64,${Buffer.from(
-            aiImageResponse.data,
-            "binary"
-        ).toString("base64")}`;
+        const base64Image = `data:image/png;base64,${Buffer.from(aiImageResponse.data).toString("base64")}`;
 
 
         // Upload to Imagekit media library
@@ -155,6 +152,11 @@ export const imageMessageController = async (req, res) => {
         await User.updateOne({ _id: userId }, { $inc: { credits: -2 } })
 
     } catch (error) {
-        return res.json({ success: false, message: error.message })
+        console.error("Image Error:", error.response?.data || error.message);
+
+        return res.status(500).json({
+            success: false,
+            message: error.response?.data || error.message
+        });
     }
 }
