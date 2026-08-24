@@ -33,7 +33,12 @@ export const textMessageController = async (req, res) => {
             ],
         });
 
-        const reply = { ...choices[0].message, timestamp: Date.now(), isImage: false }
+        const reply = {
+            role: "assistant",
+            content: choices[0].message.content,
+            timestamp: Date.now(),
+            isImage: false
+        }
         res.json({ success: true, reply })
 
         chat.messages.push(reply)
