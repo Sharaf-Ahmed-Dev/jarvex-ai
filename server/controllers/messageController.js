@@ -91,17 +91,48 @@ export const imageMessageController = async (req, res) => {
         const encodedPrompt = encodeURIComponent(prompt)
 
         // Construct ImageKit AI generation URL
-        const generatedImageUrl = `${process.env.IMAGEKIT_URL_ENDPOINT}/
-        ik-genimg-prompt-${encodedPrompt}/jarvex/${Date.now()}.png?tr=w-800,
-        h-800`;
+        const generatedImageUrl = `${process.env.IMAGEKIT_URL_ENDPOINT}/ik-genimg-prompt-${encodedPrompt}/jarvex/${Date.now()}.png`;
 
-        // Trigger generation by fetching from Imagekit
-        const aiImageResoponse = await axios.get(generatedImageUrl,
-            { responseType: "arraybuffer" })
+
+        // Trigger generation by fetching from ImageKit
+        let aiImageResponse;
+
+        for (let i = 0; i < 60; i++) {
+            aiImageResponse = await axios.get(
+                generatedImageUrl,
+                { responseType: "arraybuffer" }
+            );
+
+            const isIntermediate =
+                aiImageResponse.headers["is-intermediate-response"];
+
+            console.log(
+                `Attempt ${i + 1} - intermediate:`,
+                isIntermediate
+            );
+
+            if (isIntermediate !== "true") {
+                break;
+            }
+
+            await new Promise(resolve => setTimeout(resolve, 5000));
+        }
+
+        if (
+            aiImageResponse.headers["content-type"]?.startsWith("image/") === false
+        ) {
+            return res.json({
+                success: false,
+                message: "ImageKit could not generate the image yet. Please try again."
+            });
+        }
 
         // Convert to Base64
-        const base64Image = `data:image/png;base64,${Buffer.from(aiImageResoponse.data,
-            "binary").toString('base64')}`;
+        const base64Image = `data:image/png;base64,${Buffer.from(
+            aiImageResponse.data,
+            "binary"
+        ).toString("base64")}`;
+
 
         // Upload to Imagekit media library
         const uploadResponse = await imagekit.upload({
