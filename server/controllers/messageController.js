@@ -24,7 +24,7 @@ export const textMessageController = async (req, res) => {
         })
 
         const { choices } = await openai.chat.completions.create({
-            model: "gemini-3.7-flash",
+            model: "gemini-3.5-flash",
             messages: [
                 {
                     role: "user",
@@ -41,7 +41,23 @@ export const textMessageController = async (req, res) => {
         await User.updateOne({ _id: userId }, { $inc: { credits: -1 } })
 
     } catch (error) {
-        return res.json({ success: false, message: error.message })
+        console.error(error);
+
+        if (error.status === 429) {
+            return res.status(429).json({
+                success: false, message:
+                    "Gemini API quota exceeded. Please try again later."
+            });
+        }
+
+        if (error.status === 503) {
+            return res.status(503).json({
+                success: false, message:
+                    "Gemini is temporarily unavailable. Please try again later."
+            });
+        }
+
+        return res.status(500).json({ success: false, message: error.message });
     }
 }
 
