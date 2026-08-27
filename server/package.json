@@ -20,7 +20,9 @@
     "imagekit": "^6.0.0",
     "jsonwebtoken": "^9.0.3",
     "mongoose": "^9.7.4",
-    "openai": "^7.5.0"
+    "openai": "^7.5.0",
+    "stripe": "^22.6.0",
+    "svix": "^2.1.0"
   },
   "devDependencies": {
     "nodemon": "^3.1.14"
