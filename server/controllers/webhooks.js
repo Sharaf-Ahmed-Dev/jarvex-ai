@@ -1,4 +1,5 @@
 import Stripe from "stripe";
+import Transaction from "../models/Transaction.js";
 
 export const stripeWebhooks = async (request, response) => {
 
@@ -14,7 +15,27 @@ export const stripeWebhooks = async (request, response) => {
     }
 
     try {
-        
+        switch (event.type) {
+            case "payment_intent.succeeded": {
+                const paymentIntent = event.data.object;
+                const sessionList = await stripe.checkout.sessions.list({
+                    payment_intent: paymentIntent.id,
+                })
+
+                const session = sessionList.data[0];
+                const { transactionId, appId } = session.metadata;
+
+                if (appId === 'jarvexai') {
+                    const transaction = await Transaction.findOne({ _id: transactionId, isPaid: false })
+
+                }
+            }
+
+                break;
+
+            default:
+                break;
+        }
     } catch (error) {
 
     }
