@@ -1,5 +1,6 @@
 import Stripe from "stripe";
 import Transaction from "../models/Transaction.js";
+import User from "../models/User.js";
 
 export const stripeWebhooks = async (request, response) => {
 
@@ -28,15 +29,25 @@ export const stripeWebhooks = async (request, response) => {
                 if (appId === 'jarvexai') {
                     const transaction = await Transaction.findOne({ _id: transactionId, isPaid: false })
 
+                    // Update credits in user account
+                    await User.updateOne({ _id: transaction.userId }, { $inc: { credits: transaction.credits } })
+
+                    // Update credit payment status
+                    transaction.isPaid = true;
+                    await transaction.save();
+                } else {
+                    return response.json({ received: true, message: "Ignored event: Invalid app" })
                 }
+                break;
             }
 
-                break;
-
             default:
+                console.log("Unhandled event type:", event.type)
                 break;
         }
+        response.json({ received: true })
     } catch (error) {
-
+        console.error("Webhook processing error:", error)
+        response.status(500).send("Internal server error")
     }
 }
