@@ -101,10 +101,11 @@ const Login = () => {
                     {state === "login" ? "Sign In" : "Get Started"}
                 </button>
 
-                <p onClick={() => setState(prev => prev === "login" ? "register" : "login")} className="text-gray-500 
-                dark:text-zinc-400 text-sm mt-5 mb-4 cursor-pointer">
+                <p onClick={() => setState(prev => prev === "login" ? "register" : "login")} className="text-gray-500 dark:text-zinc-400 text-sm mt-5 mb-4 cursor-pointer">
                     {state === "login" ? "Don't have an account? " : "Already have an account? "}
-                    <span className="text-[#C5A880] font-medium hover:underline ml-1">Register here</span>
+                    <span className="text-[#C5A880] font-medium hover:underline ml-1">
+                        {state === "login" ? "Register here" : "Login here"}
+                    </span>
                 </p>
             </form>
         </>
