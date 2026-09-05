@@ -45,7 +45,7 @@ const Sidebar = ({ isMenuOpen, setIsMenuOpen }) => {
                 className='w-full max-w-48' />
 
             {/* New Chat Button */}
-            <button className='flex justify-center items-center w-full  py-2 mt-10
+            <button onClick={createNewChat} className='flex justify-center items-center w-full  py-2 mt-10
             text-neutral-900 font-medium bg-gradient-to-r from-[#DFBA73] via-[#C5A880] to-[#9E7F44] text-sm rounded-md
             cursor-pointer'>
                 <span className='mr-2 text-xl'>+</span> New chat
