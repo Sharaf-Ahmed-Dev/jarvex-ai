@@ -7,7 +7,7 @@ import toast from 'react-hot-toast'
 const Sidebar = ({ isMenuOpen, setIsMenuOpen }) => {
 
     const { chats, setSelectedChat, theme, setTheme, user, navigate,
-        createNewChat, axios, setChats, fetchUsersChats, setToken } = useAppContext()
+        createNewChat, axios, setChats, fetchUsersChats, setToken, token } = useAppContext()
     const [search, setSearch] = useState('')
 
     const logout = () => {
