@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import Sidebar from './components/Sidebar'
-import { Route, Routes, useLocation } from 'react-router-dom'
+import { Route, Routes } from 'react-router-dom'
 import ChatBox from './components/ChatBox'
 import Credits from './pages/Credits'
 import Community from './pages/Community'
@@ -12,19 +12,15 @@ import Login from './pages/Login'
 import { Toaster } from 'react-hot-toast'
 
 const App = () => {
-
-  const { user, loadingUser } = useAppContext()
+  const { user } = useAppContext()
   const [isMenuOpen, setIsMenuOpen] = useState(false)
-  const { pathname } = useLocation()
-
-  if (pathname === '/loading' || loadingUser) return <Loading />
 
   return (
     <>
       <Toaster />
       {user ? (
         <div className='bg-gradient-to-b dark:from-[#0B0B0B] dark:via-[#1A140A] dark:to-[#050505] dark:text-white'>
-          <div className='flex h-screen w-screen relative'>
+          <div className='flex h-screen w-screen relative overflow-hidden'>
             {!isMenuOpen && (
               <img
                 src={assets.menu_icon}
@@ -38,13 +34,14 @@ const App = () => {
               <Route path='/' element={<ChatBox />} />
               <Route path='/credits' element={<Credits />} />
               <Route path='/community' element={<Community />} />
+              <Route path='/loading' element={<Loading />} />
             </Routes>
           </div>
         </div>
       ) : (
-        <div className="bg-gradient-to-b from-stone-50 via-neutral-100 to-zinc-200 
-        dark:from-[#1D1B1E] dark:via-[#131114] dark:to-[#070708]
-         flex items-center justify-center h-screen w-screen transition-all duration-500">
+        <div className="bg-gradient-to-b from-stone-50 via-neutral-100 to-zinc-200 dark:from-[#1D1B1E] 
+        dark:via-[#131114] dark:to-[#070708] flex items-center justify-center h-screen w-screen 
+        transition-all duration-500">
           <Login />
         </div>
       )}
