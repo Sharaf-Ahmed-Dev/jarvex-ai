@@ -1,14 +1,25 @@
 import React, { useEffect, useState } from 'react'
-import { dummyPublishedImages } from '../assets/assets'
 import Loading from './Loading'
+import { useAppContext } from '../context/AppContext'
+import toast from 'react-hot-toast'
 
 const Community = () => {
 
     const [images, setImages] = useState([])
     const [loading, setLoading] = useState(true)
+    const { axios } = useAppContext()
 
     const fetchImages = async () => {
-        setImages(dummyPublishedImages)
+        try {
+            const { data } = await axios.get('/api/user/published-images')
+            if (data.success) {
+                setImages(data.images)
+            } else {
+                toast.error(data.message)
+            }
+        } catch (error) {
+            toast.error(error.message)
+        }
         setLoading(false)
     }
 
@@ -26,7 +37,7 @@ const Community = () => {
             {images.length > 0 ? (
                 <div className='flex flex-wrap max-sm:justify-center gap-10'>
                     {images.map((item, index) => (
-                        <a key={index} href={item.imageUrl} target='_blank' className='relative group block rounded-lg 
+                        <a key={index} href={item.imageUrl} target='_blank' className='relative group w-44 sm:w-56 h-44 sm:w-56 block rounded-lg 
                         overflow-hidden border border-slate-200 dark:border-amber-100
                         shadow-sm hover:shadow-md transition-shadow duration-300'>
                             <img src={item.imageUrl} alt="" className='w-full

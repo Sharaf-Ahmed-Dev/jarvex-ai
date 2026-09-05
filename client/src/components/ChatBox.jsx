@@ -30,7 +30,7 @@ const ChatBox = () => {
             }])
 
             const { data } = await axios.post(`/api/message/${mode}`,
-                { chatId: selectedChat._id, prompt, ispublished }, { headers: { Authorization: token } })
+                { chatId: selectedChat._id, prompt, isPublished: ispublished }, { headers: { Authorization: token } })
 
             if (data.success) {
                 setMessages(prev => [...prev, data.reply])
