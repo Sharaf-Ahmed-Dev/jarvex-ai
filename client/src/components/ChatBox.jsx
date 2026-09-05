@@ -26,8 +26,7 @@ const ChatBox = () => {
             const promptCopy = prompt
             setPrompt('')
             setMessages(prev => [...prev, {
-                role: 'user', content: prompt,
-                timestamp: Date.now(), isImage: false
+                role: 'user', content: prompt, isImage: false
             }])
 
             const { data } = await axios.post(`/api/message/${mode}`,
